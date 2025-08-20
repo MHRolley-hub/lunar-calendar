@@ -1,0 +1,9 @@
+# Development files
+*.sh
+*.desktop
+ngrok*
+lunar-app.html
+
+# System files
+.DS_Store
+Thumbs.db
