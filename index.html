@@ -29,8 +29,9 @@
         
         .date-display {
             font-size: 1.4rem;
-            margin-bottom: 20px;
-            color: #ccc;
+            margin-bottom: 10px;
+            color: #fff;
+            font-weight: bold;
         }
         
         .moon-container {
@@ -219,10 +220,14 @@
         }
         
         .lunar-date {
-            font-size: 0.9rem;
-            color: #ddd;
-            margin-top: 5px;
-            font-style: italic;
+            font-size: 1.2rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-weight: bold;
+            background: rgba(255,215,0,0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
         }
         
         @media (max-width: 600px) {
@@ -241,8 +246,15 @@
         <div class="lunar-date" id="lunarDate"></div>
         
         <div class="holiday-info" id="holidayInfo" style="display: none;">
-            <h3 id="holidayName"></h3>
-            <p id="holidayDescription"></p>
+            <h3 id="holidayNameEn"></h3>
+            <h3 id="holidayNameVi" style="color: #ffb3b3; font-size: 1rem; margin-top: 5px;"></h3>
+            <div style="margin-top: 12px;">
+                <p id="holidayDescriptionEn" style="margin-bottom: 10px;"></p>
+                <p id="holidayDescriptionVi" style="color: #e0e0e0; font-style: italic;"></p>
+            </div>
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <strong>Traditions:</strong> <span id="holidayTraditions"></span>
+            </div>
         </div>
         
         <div class="moon-container">
@@ -280,48 +292,187 @@
     <script>
         let currentDate = new Date();
         
-        // Vietnamese lunar calendar holidays (month/day)
+        /**
+         * Vietnamese lunar calendar holidays with bilingual descriptions
+         * Key format: 'lunar_month/lunar_day'
+         *
+         * To add a new festival, simply add a new entry following this format:
+         * 'M/D': {
+         *     nameEn: 'English name',
+         *     nameVi: 'Vietnamese name',
+         *     descriptionEn: 'English description',
+         *     descriptionVi: 'Vietnamese description',
+         *     traditions: 'Common traditions and practices'
+         * }
+         */
         const vietnameseHolidays = {
-            '1/1': { name: 'Tết Nguyên Đán (Vietnamese New Year)', description: 'The most important holiday in Vietnamese culture, celebrating the lunar new year' },
-            '1/2': { name: 'Tết Nguyên Đán (Day 2)', description: 'Second day of Vietnamese New Year celebrations' },
-            '1/3': { name: 'Tết Nguyên Đán (Day 3)', description: 'Third day of Vietnamese New Year celebrations' },
-            '1/15': { name: 'Tết Nguyên Tiêu (Lantern Festival)', description: 'Festival of lights with colorful lanterns and lion dances' },
-            '3/3': { name: 'Tết Hàn Thực (Cold Food Festival)', description: 'Traditional festival honoring ancestors, no cooking allowed' },
-            '4/15': { name: 'Lễ Phật Đản (Buddha\'s Birthday)', description: 'Celebrating the birth of Buddha Shakyamuni' },
-            '5/5': { name: 'Tết Đoan Ngọ (Dragon Boat Festival)', description: 'Festival for health and protection against evil spirits' },
-            '7/7': { name: 'Thất Tịch (Double Seventh Festival)', description: 'Vietnamese Valentine\'s Day celebrating the legend of the weaver girl and cowherd' },
-            '7/15': { name: 'Lễ Vu Lan (Ghost Festival)', description: 'Festival honoring deceased ancestors and hungry ghosts' },
-            '8/15': { name: 'Tết Trung Thu (Mid-Autumn Festival)', description: 'Harvest festival with mooncakes and lanterns, especially for children' },
-            '9/9': { name: 'Tết Trùng Cửu (Double Ninth Festival)', description: 'Festival for longevity and health, climbing mountains tradition' },
-            '10/10': { name: 'Tết Hạ Nguyên (Water Lantern Festival)', description: 'Festival of forgiveness and letting go of grievances' },
-            '12/8': { name: 'Lễ Phật Thành Đạo (Buddha\'s Enlightenment)', description: 'Commemorating Buddha\'s enlightenment under the Bodhi tree' },
-            '12/23': { name: 'Tết Táo Quân (Kitchen God Festival)', description: 'Sending the Kitchen God to heaven to report on the family' }
+            '1/1': {
+                nameEn: 'Tết Nguyên Đán (Vietnamese New Year)',
+                nameVi: 'Tết Nguyên Đán',
+                descriptionEn: 'The most important holiday in Vietnamese culture, celebrating the arrival of spring and the lunar new year. Families gather, pay respects to ancestors, exchange lucky money, and enjoy traditional foods.',
+                descriptionVi: 'Ngày lễ quan trọng nhất trong văn hóa Việt Nam, chào đón mùa xuân và năm mới âm lịch. Gia đình sum họp, thờ cúng tổ tiên, trao lì xì may mắn và thưởng thức các món ăn truyền thống.',
+                traditions: 'Visiting temples, giving red envelopes, eating bánh chưng'
+            },
+            '1/2': {
+                nameEn: 'Tết Nguyên Đán (Day 2)',
+                nameVi: 'Tết Nguyên Đán (Mùng 2)',
+                descriptionEn: 'Second day of Tết - traditionally for visiting friends, teachers, and extended family. Many people also visit pagodas to pray for good fortune.',
+                descriptionVi: 'Ngày mùng 2 Tết - truyền thống đi thăm bạn bè, thầy cô và họ hàng xa. Nhiều người cũng đi chùa cầu may mắn.',
+                traditions: 'Visiting relatives, temple visits, family gatherings'
+            },
+            '1/3': {
+                nameEn: 'Tết Nguyên Đán (Day 3)',
+                nameVi: 'Tết Nguyên Đán (Mùng 3)',
+                descriptionEn: 'Third day of Tết - often considered an unlucky day for visiting. Many families stay home or visit graves of deceased relatives.',
+                descriptionVi: 'Ngày mùng 3 Tết - thường được coi là ngày xấu để đi thăm hỏi. Nhiều gia đình ở nhà hoặc đi thăm mộ người thân đã khuất.',
+                traditions: 'Ancestral worship, staying home with family'
+            },
+            '1/15': {
+                nameEn: 'Tết Nguyên Tiêu (Lantern Festival)',
+                nameVi: 'Tết Nguyên Tiêu (Rằm tháng Giêng)',
+                descriptionEn: 'First full moon of the lunar year. Festival of lights with colorful lanterns, lion dances, and releasing lanterns on water to honor ancestors.',
+                descriptionVi: 'Trăng tròn đầu tiên của năm âm lịch. Lễ hội ánh sáng với đèn lồng nhiều màu sắc, múa lân và thả đèn hoa đăng để tưởng nhớ tổ tiên.',
+                traditions: 'Lantern displays, lion dances, releasing floating lanterns'
+            },
+            '3/3': {
+                nameEn: 'Tết Hàn Thực (Cold Food Festival)',
+                nameVi: 'Tết Hàn Thực',
+                descriptionEn: 'Ancient festival honoring ancestors where families traditionally eat cold food. Commemorates loyalty and filial piety.',
+                descriptionVi: 'Lễ hội cổ xưa tưởng nhớ tổ tiên, các gia đình ăn đồ ăn lạnh theo truyền thống. Tưởng niệm lòng trung thành và hiếu thảo.',
+                traditions: 'Eating cold food, ancestral worship, tomb sweeping'
+            },
+            '4/15': {
+                nameEn: 'Lễ Phật Đản (Buddha\'s Birthday)',
+                nameVi: 'Lễ Phật Đản (Phật Sinh)',
+                descriptionEn: 'Celebration of the birth of Gautama Buddha. Buddhists visit pagodas, release birds and fish, and perform acts of kindness.',
+                descriptionVi: 'Kỷ niệm ngày sinh của Đức Phật Thích Ca. Phật tử đi chùa, phóng sinh và làm các việc thiện.',
+                traditions: 'Temple visits, vegetarian meals, releasing captive animals'
+            },
+            '5/5': {
+                nameEn: 'Tết Đoan Ngọ (Double Fifth Festival)',
+                nameVi: 'Tết Đoan Ngọ (Tết diệt sâu bọ)',
+                descriptionEn: 'Festival for killing insects and preventing diseases. Families eat special fruits, drink ruou nep, and wear protective amulets.',
+                descriptionVi: 'Tết diệt sâu bọ và phòng tránh bệnh tật. Gia đình ăn trái cây đặc biệt, uống rượu nếp và đeo bùa hộ mệnh.',
+                traditions: 'Eating fruits, drinking rice wine, wearing amulets'
+            },
+            '7/7': {
+                nameEn: 'Thất Tịch (Double Seventh Festival)',
+                nameVi: 'Thất Tịch (Ngưu Lang Chức Nữ)',
+                descriptionEn: 'Vietnamese Valentine\'s Day celebrating the legend of the Cowherd and Weaver Girl who meet once a year on this night.',
+                descriptionVi: 'Ngày lễ tình nhân Việt Nam kỷ niệm truyền thuyết Ngưu Lang và Chức Nữ gặp nhau một lần mỗi năm vào đêm này.',
+                traditions: 'Romantic celebrations, stargazing, storytelling'
+            },
+            '7/15': {
+                nameEn: 'Lễ Vu Lan (Ullambana Festival)',
+                nameVi: 'Lễ Vu Lan (Báo hiếu)',
+                descriptionEn: 'Festival honoring parents and ancestors. People wear roses - red for living mothers, white for deceased. Temple ceremonies and charity acts are performed.',
+                descriptionVi: 'Lễ hội tưởng nhớ cha mẹ và tổ tiên. Người ta cài hoa hồng - đỏ cho mẹ còn sống, trắng cho mẹ đã mất. Cử hành lễ chùa và làm từ thiện.',
+                traditions: 'Wearing roses, temple ceremonies, charity, honoring parents'
+            },
+            '8/15': {
+                nameEn: 'Tết Trung Thu (Mid-Autumn Festival)',
+                nameVi: 'Tết Trung Thu (Tết Thiếu nhi)',
+                descriptionEn: 'Harvest moon festival celebrating children. Families gather to eat mooncakes, carry lanterns, watch lion dances, and enjoy the full moon.',
+                descriptionVi: 'Tết trăng rằm mừng trẻ em. Gia đình sum họp ăn bánh trung thu, rước đèn lồng, xem múa lân và ngắm trăng tròn.',
+                traditions: 'Mooncakes, lantern processions, lion dances, family gatherings'
+            },
+            '9/9': {
+                nameEn: 'Tết Trùng Cửu (Double Ninth Festival)',
+                nameVi: 'Tết Trùng Cửu (Tết Trùng Dương)',
+                descriptionEn: 'Festival for longevity and health. People climb mountains, drink chrysanthemum wine, and honor the elderly.',
+                descriptionVi: 'Lễ hội cầu sức khỏe và trường thọ. Người ta leo núi, uống rượu hoa cúc và tôn kính người cao tuổi.',
+                traditions: 'Mountain climbing, chrysanthemum wine, honoring elders'
+            },
+            '10/10': {
+                nameEn: 'Tết Hạ Nguyên (Lower Nguyen Festival)',
+                nameVi: 'Tết Hạ Nguyên (Tết Cơm Mới)',
+                descriptionEn: 'Festival of forgiveness and new harvest. Families release water lanterns, pray for peace, and celebrate the new rice harvest.',
+                descriptionVi: 'Lễ hội tha thứ và mùa màng mới. Gia đình thả đèn nước, cầu bình an và mừng vụ lúa mới.',
+                traditions: 'Water lanterns, new rice offerings, prayer ceremonies'
+            },
+            '12/8': {
+                nameEn: 'Lễ Phật Thành Đạo (Buddha\'s Enlightenment)',
+                nameVi: 'Lễ Phật Thành Đạo (Lễ Lạp Bát)',
+                descriptionEn: 'Commemorating Buddha\'s enlightenment under the Bodhi tree. Buddhists eat special porridge and practice meditation.',
+                descriptionVi: 'Tưởng niệm ngày Đức Phật đạt được giác ngộ dưới cây Bồ Đề. Phật tử ăn cháo đặc biệt và tập thiền.',
+                traditions: 'Eight-treasure porridge, meditation, temple ceremonies'
+            },
+            '12/23': {
+                nameEn: 'Tết Táo Quân (Kitchen Gods\' Festival)',
+                nameVi: 'Tết Táo Quân (Ông Táo về trời)',
+                descriptionEn: 'Sending the Kitchen Gods to heaven to report on the family\'s year. Families clean homes, offer carp fish, and prepare for Tết.',
+                descriptionVi: 'Tiễn Ông Táo về trời báo cáo về năm của gia đình. Các gia đình dọn dẹp nhà cửa, cúng cá chép và chuẩn bị Tết.',
+                traditions: 'Releasing carp fish, cleaning house, offering ceremonies'
+            },
+            '1/10': {
+                nameEn: 'Ngày Giỗ Tổ Hùng Vương (Hung Kings\' Memorial)',
+                nameVi: 'Giỗ Tổ Hùng Vương',
+                descriptionEn: 'Memorial day for the Hung Kings, legendary founders of Vietnam. A national holiday honoring Vietnamese origins.',
+                descriptionVi: 'Ngày giỗ các Vua Hùng, tổ tiên huyền thoại của Việt Nam. Ngày lễ quốc gia tưởng nhớ nguồn gốc dân tộc.',
+                traditions: 'Temple pilgrimages, offerings, patriotic ceremonies'
+            }
         };
         
-        // Lunar calendar conversion (simplified - uses approximation)
+        // Vietnamese Lunar New Year dates (Tết) for multiple years
+        const lunarNewYearDates = {
+            2020: new Date('2020-01-25'),
+            2021: new Date('2021-02-12'),
+            2022: new Date('2022-02-01'),
+            2023: new Date('2023-01-22'),
+            2024: new Date('2024-02-10'),
+            2025: new Date('2025-01-29'),
+            2026: new Date('2026-02-17'),
+            2027: new Date('2027-02-06'),
+            2028: new Date('2028-01-26'),
+            2029: new Date('2029-02-13'),
+            2030: new Date('2030-02-03')
+        };
+
+        // Lunar calendar conversion with improved accuracy
         function solarToLunar(solarDate) {
-            const lunarNewYear2024 = new Date('2024-02-10'); // Tết 2024
-            const lunarNewYear2025 = new Date('2025-01-29'); // Tết 2025
-            
-            let lunarNewYear, lunarYear;
-            if (solarDate >= lunarNewYear2025) {
-                lunarNewYear = lunarNewYear2025;
-                lunarYear = 2025;
-            } else if (solarDate >= lunarNewYear2024) {
-                lunarNewYear = lunarNewYear2024;
-                lunarYear = 2024;
-            } else {
-                lunarNewYear = new Date('2023-01-22'); // Tết 2023
-                lunarYear = 2023;
+            const year = solarDate.getFullYear();
+
+            // Get Tết date for current year and next year
+            let lunarNewYear = lunarNewYearDates[year];
+            let nextLunarNewYear = lunarNewYearDates[year + 1];
+            let lunarYear = year;
+
+            // If date is before this year's Tết, it belongs to previous lunar year
+            if (solarDate < lunarNewYear) {
+                lunarNewYear = lunarNewYearDates[year - 1];
+                nextLunarNewYear = lunarNewYearDates[year];
+                lunarYear = year - 1;
             }
-            
+
+            // Calculate days since lunar new year
             const daysDiff = Math.floor((solarDate - lunarNewYear) / (1000 * 60 * 60 * 24));
-            const lunarMonth = Math.floor(daysDiff / 29.5) + 1;
-            const lunarDay = (daysDiff % 29.5) + 1;
-            
+
+            // Average lunar month is 29.53 days
+            const avgLunarMonth = 29.53;
+
+            // Estimate lunar month and day
+            let lunarMonth = Math.floor(daysDiff / avgLunarMonth) + 1;
+            let lunarDay = Math.floor(daysDiff % avgLunarMonth) + 1;
+
+            // Adjust for lunar month boundaries (alternate between 29 and 30 days)
+            let daysCount = daysDiff;
+            lunarMonth = 1;
+
+            while (daysCount >= 29) {
+                const monthLength = (lunarMonth % 2 === 1) ? 30 : 29; // Alternating month lengths
+                if (daysCount >= monthLength) {
+                    daysCount -= monthLength;
+                    lunarMonth++;
+                } else {
+                    break;
+                }
+            }
+
+            lunarDay = daysCount + 1;
+
             return {
                 year: lunarYear,
-                month: Math.max(1, Math.min(12, Math.floor(lunarMonth))),
+                month: Math.max(1, Math.min(12, lunarMonth)),
                 day: Math.max(1, Math.min(30, Math.floor(lunarDay)))
             };
         }
@@ -404,17 +555,20 @@
             
             // Update lunar date
             const lunarDate = solarToLunar(currentDate);
-            document.getElementById('lunarDate').textContent = 
-                `Lunar: ${lunarDate.month}/${lunarDate.day}/${lunarDate.year}`;
+            document.getElementById('lunarDate').textContent =
+                `🌙 Lunar Calendar: Month ${lunarDate.month}, Day ${lunarDate.day}, Year ${lunarDate.year}`;
             
             // Check for Vietnamese holidays
             const holidayKey = `${lunarDate.month}/${lunarDate.day}`;
             const holidayInfo = document.getElementById('holidayInfo');
-            
+
             if (vietnameseHolidays[holidayKey]) {
                 const holiday = vietnameseHolidays[holidayKey];
-                document.getElementById('holidayName').textContent = holiday.name;
-                document.getElementById('holidayDescription').textContent = holiday.description;
+                document.getElementById('holidayNameEn').textContent = holiday.nameEn;
+                document.getElementById('holidayNameVi').textContent = holiday.nameVi;
+                document.getElementById('holidayDescriptionEn').textContent = holiday.descriptionEn;
+                document.getElementById('holidayDescriptionVi').textContent = holiday.descriptionVi;
+                document.getElementById('holidayTraditions').textContent = holiday.traditions;
                 holidayInfo.style.display = 'block';
             } else {
                 holidayInfo.style.display = 'none';
@@ -476,7 +630,7 @@
                 const holidayKey = `${lunarDate.month}/${lunarDate.day}`;
                 if (vietnameseHolidays[holidayKey]) {
                     dayElement.classList.add('vietnamese-holiday');
-                    dayElement.title = vietnameseHolidays[holidayKey].name;
+                    dayElement.title = `${vietnameseHolidays[holidayKey].nameEn}\n${vietnameseHolidays[holidayKey].nameVi}`;
                 }
                 
                 dayElement.onclick = () => {
