@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a3e">
+    <title>Vietnamese Lunar Calendar</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e, #2d2d5f);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .content {
+            padding: 15px;
+        }
+
+        .date-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .gregorian-date {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .lunar-date {
+            font-size: 1.5rem;
+            color: #ffd700;
+            font-weight: bold;
+            background: rgba(255,215,0,0.1);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .moon-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .moon-phase {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #333;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+            overflow: hidden;
+            margin: 0 auto 15px;
+        }
+
+        .moon-light {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #f5f5dc 0%, #e6e6fa 100%);
+        }
+
+        .phase-name {
+            font-size: 1.2rem;
+            color: #f0f0f0;
+            margin-bottom: 5px;
+        }
+
+        .illumination {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        .event-card {
+            background: rgba(255,100,100,0.2);
+            border: 2px solid rgba(255,100,100,0.5);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .event-title-en {
+            font-size: 1.2rem;
+            color: #ff9999;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .event-title-vi {
+            font-size: 1rem;
+            color: #ffb3b3;
+            margin-bottom: 10px;
+        }
+
+        .event-description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+
+        .event-description-vi {
+            font-size: 0.85rem;
+            color: #ccc;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            color: #ffd700;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .section-content {
+            font-size: 0.85rem;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        .nav-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .nav-btn.today {
+            background: rgba(255,215,0,0.2);
+            border-color: rgba(255,215,0,0.5);
+            color: #ffd700;
+        }
+
+        .install-prompt {
+            background: rgba(255,215,0,0.2);
+            border: 2px solid rgba(255,215,0,0.5);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-btn {
+            background: #ffd700;
+            color: #1a1a3e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><span>🌙</span> Lunar Calendar</h1>
+        <a href="settings.html" class="settings-btn" style="position: relative;">
+            ⚙️
+            <span class="notification-badge" id="notificationBadge" style="display: none;">!</span>
+        </a>
+    </div>
+
+    <div class="content">
+        <div class="install-prompt" id="installPrompt">
+            <strong>📱 Install App</strong>
+            <p style="margin: 10px 0; font-size: 0.9rem;">Add this app to your home screen for quick access and daily notifications!</p>
+            <button class="install-btn" id="installBtn">Install Now</button>
+        </div>
+
+        <div class="date-card">
+            <div class="gregorian-date" id="gregorianDate"></div>
+            <div class="lunar-date" id="lunarDate"></div>
+        </div>
+
+        <div class="moon-display">
+            <div class="moon-phase" id="moonPhase">
+                <div class="moon-light" id="moonLight"></div>
+            </div>
+            <div class="phase-name" id="phaseName"></div>
+            <div class="illumination" id="illumination"></div>
+        </div>
+
+        <div id="eventContainer"></div>
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="changeDate(-1)">← Previous</button>
+        <button class="nav-btn today" onclick="goToToday()">Today</button>
+        <button class="nav-btn" onclick="changeDate(1)">Next →</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

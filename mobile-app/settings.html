@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a3e">
+    <title>Settings - Vietnamese Lunar Calendar</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e, #2d2d5f);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .settings-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            flex: 1;
+        }
+
+        .setting-label-main {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .setting-label-sub {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.2);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ffd700;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .permission-status {
+            font-size: 0.85rem;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .permission-status.granted {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #90EE90;
+        }
+
+        .permission-status.denied {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #ffaaaa;
+        }
+
+        .permission-status.default {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.5);
+            color: #ffd700;
+        }
+
+        .btn {
+            background: rgba(255,215,0,0.2);
+            border: 2px solid rgba(255,215,0,0.5);
+            color: #ffd700;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background: rgba(100,150,255,0.2);
+            border: 1px solid rgba(100,150,255,0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .info-box strong {
+            color: #88bbff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-btn">←</a>
+        <h1>Settings</h1>
+    </div>
+
+    <div class="content">
+        <div class="settings-section">
+            <div class="section-title">
+                <span>🔔</span> Notifications
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-label">
+                    <div class="setting-label-main">Daily Event Notifications</div>
+                    <div class="setting-label-sub">Receive alerts at 8:00 AM for festivals and special days</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationsToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div id="permissionStatus" class="permission-status"></div>
+
+            <button class="btn" id="requestPermissionBtn" style="display: none;">
+                Enable Notifications
+            </button>
+        </div>
+
+        <div class="settings-section">
+            <div class="section-title">
+                <span>📱</span> App Information
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-label">
+                    <div class="setting-label-main">Version</div>
+                    <div class="setting-label-sub">1.0.0</div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-label">
+                    <div class="setting-label-main">Festivals Included</div>
+                    <div class="setting-label-sub">19 major Vietnamese festivals and special lunar days</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>About Notifications:</strong><br>
+            • Notifications are sent at 8:00 AM on festival days and special lunar dates (1st, 15th, and end of month)<br>
+            • Includes event name in both English and Vietnamese<br>
+            • Contains brief description and altar offering recommendations<br>
+            • Tap notification to open the app and see full details
+        </div>
+
+        <div class="info-box">
+            <strong>Privacy:</strong><br>
+            All calendar calculations and notifications are processed locally on your device. No data is sent to external servers.
+        </div>
+    </div>
+
+    <script>
+        const notificationsToggle = document.getElementById('notificationsToggle');
+        const permissionStatus = document.getElementById('permissionStatus');
+        const requestPermissionBtn = document.getElementById('requestPermissionBtn');
+
+        // Load saved setting
+        const notificationsEnabled = localStorage.getItem('notificationsEnabled');
+        if (notificationsEnabled !== null) {
+            notificationsToggle.checked = notificationsEnabled === 'true';
+        }
+
+        // Update permission status display
+        function updatePermissionStatus() {
+            if (!('Notification' in window)) {
+                permissionStatus.className = 'permission-status denied';
+                permissionStatus.innerHTML = '❌ Notifications not supported on this device';
+                notificationsToggle.disabled = true;
+                return;
+            }
+
+            const permission = Notification.permission;
+
+            if (permission === 'granted') {
+                permissionStatus.className = 'permission-status granted';
+                permissionStatus.innerHTML = '✅ Notification permission granted';
+                requestPermissionBtn.style.display = 'none';
+            } else if (permission === 'denied') {
+                permissionStatus.className = 'permission-status denied';
+                permissionStatus.innerHTML = '❌ Notification permission denied. Please enable in browser settings.';
+                requestPermissionBtn.style.display = 'none';
+            } else {
+                permissionStatus.className = 'permission-status default';
+                permissionStatus.innerHTML = '⚠️ Notification permission not granted yet';
+                if (notificationsToggle.checked) {
+                    requestPermissionBtn.style.display = 'block';
+                }
+            }
+        }
+
+        // Handle toggle change
+        notificationsToggle.addEventListener('change', function() {
+            localStorage.setItem('notificationsEnabled', this.checked.toString());
+
+            if (this.checked && Notification.permission === 'default') {
+                requestPermissionBtn.style.display = 'block';
+            } else {
+                requestPermissionBtn.style.display = 'none';
+            }
+        });
+
+        // Request permission
+        requestPermissionBtn.addEventListener('click', async function() {
+            try {
+                const permission = await Notification.requestPermission();
+                updatePermissionStatus();
+
+                if (permission === 'granted') {
+                    // Send a test notification
+                    new Notification('Vietnamese Lunar Calendar', {
+                        body: 'Notifications enabled! You will receive daily alerts at 8:00 AM for festivals and special lunar days.',
+                        icon: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ffd700\'/%3E%3Ctext x=\'50\' y=\'65\' font-size=\'50\' text-anchor=\'middle\' fill=\'%231a1a3e\'%3E🌙%3C/text%3E%3C/svg%3E'
+                    });
+                }
+            } catch (error) {
+                console.error('Error requesting notification permission:', error);
+            }
+        });
+
+        // Initialize
+        updatePermissionStatus();
+    </script>
+</body>
+</html>
