@@ -168,7 +168,7 @@ const altarOfferings = {
     }
 };
 
-// Vietnamese Lunar New Year dates (Tết) for multiple years
+// Vietnamese Lunar New Year dates (Tết) for multiple years (2020-2035)
 const lunarNewYearDates = {
     2020: new Date('2020-01-25'),
     2021: new Date('2021-02-12'),
@@ -180,7 +180,12 @@ const lunarNewYearDates = {
     2027: new Date('2027-02-06'),
     2028: new Date('2028-01-26'),
     2029: new Date('2029-02-13'),
-    2030: new Date('2030-02-03')
+    2030: new Date('2030-02-03'),
+    2031: new Date('2031-01-23'),
+    2032: new Date('2032-02-11'),
+    2033: new Date('2033-01-31'),
+    2034: new Date('2034-02-19'),
+    2035: new Date('2035-02-08')
 };
 
 // Lunar calendar conversion with improved accuracy
