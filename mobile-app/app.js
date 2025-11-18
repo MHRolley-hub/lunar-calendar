@@ -266,7 +266,71 @@ function getPhaseInfo(phase) {
 }
 
 // Update display
+function updateCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const today = new Date();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+    document.getElementById('monthYear').textContent =
+        currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+    const daysGrid = document.getElementById('daysGrid');
+    daysGrid.innerHTML = '';
+
+    for (let i = 0; i < 42; i++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+
+        const dayElement = document.createElement('div');
+        dayElement.className = 'day';
+        dayElement.textContent = date.getDate();
+
+        if (date.getMonth() !== month) {
+            dayElement.style.opacity = '0.3';
+        }
+
+        if (date.toDateString() === today.toDateString()) {
+            dayElement.classList.add('today');
+        }
+
+        if (date.toDateString() === currentDate.toDateString()) {
+            dayElement.classList.add('selected');
+        }
+
+        // Check for Vietnamese holidays and special lunar days
+        const lunarDate = solarToLunar(date);
+        const holidayKey = `${lunarDate.month}/${lunarDate.day}`;
+
+        // Highlight Vietnamese holidays
+        if (vietnameseHolidays[holidayKey]) {
+            dayElement.classList.add('vietnamese-holiday');
+        }
+        // Highlight special lunar days
+        else if (lunarDate.day === 1) {
+            dayElement.classList.add('lunar-first-day');
+        } else if (lunarDate.day === 15) {
+            dayElement.classList.add('lunar-full-moon');
+        } else if (lunarDate.day >= 29) {
+            dayElement.classList.add('lunar-month-end');
+        }
+
+        dayElement.onclick = () => {
+            currentDate = new Date(date);
+            updateDisplay();
+        };
+
+        daysGrid.appendChild(dayElement);
+    }
+}
+
 function updateDisplay() {
+    // Update calendar grid
+    updateCalendar();
+
     // Update dates
     document.getElementById('gregorianDate').textContent = currentDate.toLocaleDateString('en-US', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -337,6 +401,11 @@ function updateDisplay() {
 
 function changeDate(days) {
     currentDate.setDate(currentDate.getDate() + days);
+    updateDisplay();
+}
+
+function changeMonth(direction) {
+    currentDate.setMonth(currentDate.getMonth() + direction);
     updateDisplay();
 }
 

@@ -58,6 +58,134 @@
             padding: 15px;
         }
 
+        .calendar-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .month-nav button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            min-width: 36px;
+        }
+
+        .month-year {
+            font-size: 1.1rem;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+
+        .weekdays div {
+            padding: 6px 2px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+        }
+
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 35px;
+            font-size: 0.85rem;
+            position: relative;
+        }
+
+        .day:active {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .day.today {
+            background: rgba(255,215,0,0.3);
+            border: 2px solid #ffd700;
+        }
+
+        .day.selected {
+            background: rgba(100,150,255,0.3);
+            border: 2px solid #6496ff;
+        }
+
+        .day.vietnamese-holiday {
+            background: rgba(255,100,100,0.4);
+            border: 2px solid #ff6464;
+        }
+
+        .day.vietnamese-holiday::after {
+            content: '🏮';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 10px;
+        }
+
+        .day.lunar-first-day {
+            background: rgba(255,215,0,0.2);
+            border: 2px solid rgba(255,215,0,0.6);
+        }
+
+        .day.lunar-first-day::before {
+            content: '🌑';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            font-size: 8px;
+        }
+
+        .day.lunar-full-moon {
+            background: rgba(200,200,255,0.3);
+            border: 2px solid rgba(150,150,255,0.8);
+        }
+
+        .day.lunar-full-moon::before {
+            content: '🌕';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            font-size: 8px;
+        }
+
+        .day.lunar-month-end {
+            background: rgba(150,100,200,0.2);
+            border: 2px solid rgba(150,100,200,0.6);
+        }
+
         .date-card {
             background: rgba(255,255,255,0.1);
             border-radius: 15px;
@@ -251,6 +379,19 @@
             <strong>📱 Install App</strong>
             <p style="margin: 10px 0; font-size: 0.9rem;">Add this app to your home screen for quick access and daily notifications!</p>
             <button class="install-btn" id="installBtn">Install Now</button>
+        </div>
+
+        <div class="calendar-card">
+            <div class="month-nav">
+                <button onclick="changeMonth(-1)">←</button>
+                <div class="month-year" id="monthYear"></div>
+                <button onclick="changeMonth(1)">→</button>
+            </div>
+            <div class="weekdays">
+                <div>S</div><div>M</div><div>T</div><div>W</div>
+                <div>T</div><div>F</div><div>S</div>
+            </div>
+            <div class="days-grid" id="daysGrid"></div>
         </div>
 
         <div class="date-card">
