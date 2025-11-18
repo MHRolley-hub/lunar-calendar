@@ -270,6 +270,7 @@
                 permissionStatus.className = 'permission-status denied';
                 permissionStatus.innerHTML = '❌ Notifications not supported on this device';
                 notificationsToggle.disabled = true;
+                requestPermissionBtn.style.display = 'none';
                 return;
             }
 
@@ -284,23 +285,18 @@
                 permissionStatus.innerHTML = '❌ Notification permission denied. Please enable in browser settings.';
                 requestPermissionBtn.style.display = 'none';
             } else {
+                // Permission is 'default' - not yet asked
                 permissionStatus.className = 'permission-status default';
                 permissionStatus.innerHTML = '⚠️ Notification permission not granted yet';
-                if (notificationsToggle.checked) {
-                    requestPermissionBtn.style.display = 'block';
-                }
+                // Always show the button when permission is default, regardless of toggle
+                requestPermissionBtn.style.display = 'block';
             }
         }
 
         // Handle toggle change
         notificationsToggle.addEventListener('change', function() {
             localStorage.setItem('notificationsEnabled', this.checked.toString());
-
-            if (this.checked && Notification.permission === 'default') {
-                requestPermissionBtn.style.display = 'block';
-            } else {
-                requestPermissionBtn.style.display = 'none';
-            }
+            updatePermissionStatus();
         });
 
         // Request permission

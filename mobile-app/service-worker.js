@@ -1,8 +1,9 @@
 const CACHE_NAME = 'lunar-calendar-v1';
 const urlsToCache = [
-  '/mobile-app/index.html',
-  '/mobile-app/settings.html',
-  '/mobile-app/manifest.json'
+  './index.html',
+  './settings.html',
+  './manifest.json',
+  './app.js'
 ];
 
 // Install service worker
@@ -25,7 +26,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
-    clients.openWindow('/mobile-app/index.html')
+    clients.openWindow('./')
   );
 });
 
