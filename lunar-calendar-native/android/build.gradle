@@ -35,3 +35,8 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
+wrapper {
+    gradleVersion = '8.3'
+    distributionType = Wrapper.DistributionType.ALL
+}
