@@ -61,6 +61,22 @@ jobs:
         working-directory: lunar-calendar-native
         run: npm ci
 
+      - name: Verify React Native installation
+        working-directory: lunar-calendar-native
+        run: |
+          echo "Checking for React Native CLI platform Android..."
+          if [ -f "node_modules/@react-native-community/cli-platform-android/native_modules.gradle" ]; then
+            echo "✓ native_modules.gradle found"
+          else
+            echo "✗ native_modules.gradle NOT found"
+            ls -la node_modules/@react-native-community/ || echo "No @react-native-community directory"
+          fi
+          if [ -d "node_modules/@react-native/gradle-plugin" ]; then
+            echo "✓ gradle-plugin found"
+          else
+            echo "✗ gradle-plugin NOT found"
+          fi
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 

@@ -99,4 +99,9 @@ dependencies {
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+// Apply React Native native modules
+def nativeModulesAppGradle = file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+if (nativeModulesAppGradle.exists()) {
+    apply from: nativeModulesAppGradle
+    applyNativeModulesAppBuildGradle(project)
+}
