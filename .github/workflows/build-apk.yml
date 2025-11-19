@@ -43,6 +43,48 @@ jobs:
             --bundle-output android/app/src/main/assets/index.android.bundle \
             --assets-dest android/app/src/main/res/
 
+      - name: Generate launcher icons
+        working-directory: ./lunar-calendar-native/android/app/src/main/res
+        run: |
+          # Install ImageMagick
+          sudo apt-get update && sudo apt-get install -y imagemagick
+
+          # Create a simple moon icon for each density
+          # mdpi: 48x48
+          convert -size 48x48 xc:'#1a1a3e' \
+            -fill '#FFD700' -draw 'circle 24,24 24,6' \
+            -fill '#1a1a3e' -draw 'circle 28,24 28,10' \
+            mipmap-mdpi/ic_launcher.png
+          cp mipmap-mdpi/ic_launcher.png mipmap-mdpi/ic_launcher_round.png
+
+          # hdpi: 72x72
+          convert -size 72x72 xc:'#1a1a3e' \
+            -fill '#FFD700' -draw 'circle 36,36 36,9' \
+            -fill '#1a1a3e' -draw 'circle 42,36 42,15' \
+            mipmap-hdpi/ic_launcher.png
+          cp mipmap-hdpi/ic_launcher.png mipmap-hdpi/ic_launcher_round.png
+
+          # xhdpi: 96x96
+          convert -size 96x96 xc:'#1a1a3e' \
+            -fill '#FFD700' -draw 'circle 48,48 48,12' \
+            -fill '#1a1a3e' -draw 'circle 56,48 56,20' \
+            mipmap-xhdpi/ic_launcher.png
+          cp mipmap-xhdpi/ic_launcher.png mipmap-xhdpi/ic_launcher_round.png
+
+          # xxhdpi: 144x144
+          convert -size 144x144 xc:'#1a1a3e' \
+            -fill '#FFD700' -draw 'circle 72,72 72,18' \
+            -fill '#1a1a3e' -draw 'circle 84,72 84,30' \
+            mipmap-xxhdpi/ic_launcher.png
+          cp mipmap-xxhdpi/ic_launcher.png mipmap-xxhdpi/ic_launcher_round.png
+
+          # xxxhdpi: 192x192
+          convert -size 192x192 xc:'#1a1a3e' \
+            -fill '#FFD700' -draw 'circle 96,96 96,24' \
+            -fill '#1a1a3e' -draw 'circle 112,96 112,40' \
+            mipmap-xxxhdpi/ic_launcher.png
+          cp mipmap-xxxhdpi/ic_launcher.png mipmap-xxxhdpi/ic_launcher_round.png
+
       - name: Setup Gradle 8.5
         uses: gradle/actions/setup-gradle@v3
         with:

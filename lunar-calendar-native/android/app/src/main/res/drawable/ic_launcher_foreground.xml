@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="21.6"
+        android:translateY="21.6">
+        <!-- Moon circle -->
+        <path
+            android:fillColor="#FFD700"
+            android:pathData="M54,18 A36,36 0 1,1 54,90 A36,36 0 0,1 54,18 Z"/>
+        <!-- Crescent shadow -->
+        <path
+            android:fillColor="#1a1a3e"
+            android:pathData="M70,18 A36,36 0 1,1 70,90 A30,30 0 0,0 70,18 Z"/>
+    </group>
+</vector>
