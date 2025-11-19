@@ -1,0 +1,77 @@
+package com.lunarcalendarapp.widgets;
+
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
+import android.content.Context;
+import android.content.Intent;
+import android.widget.RemoteViews;
+import com.lunarcalendarapp.R;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class LargeWidgetProvider extends AppWidgetProvider {
+
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        if (intent.getAction() != null && intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                new android.content.ComponentName(context, LargeWidgetProvider.class)
+            );
+            onUpdate(context, appWidgetManager, appWidgetIds);
+        }
+    }
+
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_large);
+
+        // Get current date
+        Date today = new Date();
+
+        // Calculate lunar date
+        LunarCalendarUtils.LunarDate lunarDate = LunarCalendarUtils.solarToLunar(today);
+
+        // Calculate moon phase
+        double phase = LunarCalendarUtils.calculateMoonPhase(today);
+        String moonEmoji = LunarCalendarUtils.getMoonEmoji(phase);
+
+        // Get holiday name if any
+        String holidayName = LunarCalendarUtils.getHolidayName(lunarDate);
+        if (holidayName == null) {
+            holidayName = "Lunar Calendar";
+        }
+
+        // Format solar date
+        SimpleDateFormat solarFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+        String solarDateStr = solarFormat.format(today);
+
+        // Update widget views
+        views.setTextViewText(R.id.lunar_date_text, lunarDate.getFormattedDate());
+        views.setTextViewText(R.id.moon_phase_emoji, moonEmoji);
+        views.setTextViewText(R.id.event_title, holidayName);
+        views.setTextViewText(R.id.solar_date_text, solarDateStr);
+
+        // Create intent to open app when widget is clicked
+        Intent intent = new Intent(context, com.lunarcalendarapp.MainActivity.class);
+        android.app.PendingIntent pendingIntent = android.app.PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE
+        );
+        views.setOnClickPendingIntent(R.id.event_title, pendingIntent);
+
+        // Update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+}

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Vietnamese Lunar Calendar</string>
+    <string name="small_widget_description">Lunar date and moon phase</string>
+    <string name="large_widget_description">Lunar date with festival info</string>
+</resources>
