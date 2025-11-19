@@ -138,6 +138,41 @@ jobs:
           path: lunar-calendar-native/android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
 
+      - name: Get version info
+        id: version
+        run: |
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.date }}-${{ steps.version.outputs.short_sha }}
+          name: Vietnamese Lunar Calendar - ${{ steps.version.outputs.date }}
+          body: |
+            ## Vietnamese Lunar Calendar Android App
+
+            ### New Features
+            - 🎉 **Popup info modal** - Event details now appear in a beautiful centered popup
+            - 🎨 **Dynamic widget backgrounds** - Widget colors change based on lunar day type:
+              - 🏮 Red for holidays
+              - 🌑 Gold for first days (Mùng 1)
+              - 🌕 Blue for full moons (Rằm)
+              - 🌙 Purple for month-end days
+
+            ### Installation
+            1. Download the APK below
+            2. Enable "Install from Unknown Sources" in your Android settings
+            3. Open the APK file to install
+
+            **Build Date:** ${{ steps.version.outputs.date }}
+            **Commit:** ${{ github.sha }}
+          files: |
+            lunar-calendar-native/android/app/build/outputs/apk/release/app-release.apk
+          draft: false
+          prerelease: false
+
       - name: Build Summary
         run: |
           echo "## Build Complete! 🎉" >> $GITHUB_STEP_SUMMARY
@@ -147,6 +182,7 @@ jobs:
           echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.event.inputs.build_type }}" == "release" ] || [ "${{ github.ref }}" == "refs/heads/main" ]; then
             echo "- **Build Type:** Release" >> $GITHUB_STEP_SUMMARY
+            echo "- **Release Tag:** v${{ steps.version.outputs.date }}-${{ steps.version.outputs.short_sha }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "- **Build Type:** Debug" >> $GITHUB_STEP_SUMMARY
           fi

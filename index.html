@@ -901,13 +901,22 @@
     </script>
 
     <!-- Mobile App Banner (only shows on mobile) -->
-    <a href="mobile-app/index.html" id="mobileAppBanner" class="mobile-app-banner">
-        <span class="icon">📱</span>
-        <div class="text">
-            <span class="title">Get the App</span>
-            <span class="subtitle">• Notifications • Offline</span>
+    <div id="mobileAppBanner" class="mobile-app-banner" style="padding: 15px; flex-direction: column; align-items: flex-start;">
+        <div style="display: flex; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="icon">📱</span>
+                <span class="title" style="font-size: 1rem; font-weight: bold;">Get the App</span>
+            </div>
+            <button class="close-btn" onclick="closeMobileAppBanner();" style="margin: 0;">×</button>
         </div>
-        <button class="close-btn" onclick="event.preventDefault(); closeMobileAppBanner();">×</button>
-    </a>
+        <div style="display: flex; gap: 10px; width: 100%; flex-wrap: wrap;">
+            <a href="mobile-app/index.html" style="flex: 1; min-width: 120px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-decoration: none; color: white; text-align: center; font-size: 0.85rem;">
+                🌐 Web App
+            </a>
+            <a href="https://github.com/MHRolley-hub/lunar-calendar/releases/latest/download/app-release.apk" style="flex: 1; min-width: 120px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-decoration: none; color: white; text-align: center; font-size: 0.85rem;">
+                🤖 Android APK
+            </a>
+        </div>
+    </div>
 </body>
 </html>
