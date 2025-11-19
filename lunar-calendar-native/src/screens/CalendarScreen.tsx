@@ -6,6 +6,8 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  Modal,
+  Pressable,
 } from 'react-native';
 import {
   solarToLunar,
@@ -28,6 +30,7 @@ const CalendarScreen: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
     setCalendarMonth(currentDate);
@@ -49,6 +52,19 @@ const CalendarScreen: React.FC = () => {
     const today = new Date();
     setSelectedDate(today);
     setCalendarMonth(today);
+  };
+
+  const handleDayPress = (date: Date) => {
+    setSelectedDate(new Date(date));
+    const lunarDate = solarToLunar(date);
+    const holidayKey = `${lunarDate.month}/${lunarDate.day}`;
+    const hasHoliday = !!vietnameseHolidays[holidayKey];
+    const specialDay = isSpecialLunarDay(lunarDate.day);
+
+    // Show modal if there's event info
+    if (hasHoliday || (specialDay.isSpecial && specialDay.type)) {
+      setShowInfoModal(true);
+    }
   };
 
   const renderCalendar = () => {
@@ -100,7 +116,7 @@ const CalendarScreen: React.FC = () => {
         <TouchableOpacity
           key={i}
           style={dayStyle}
-          onPress={() => setSelectedDate(new Date(date))}>
+          onPress={() => handleDayPress(date)}>
           <Text style={styles.dayText}>{date.getDate()}</Text>
           {hasHoliday && <Text style={styles.dayIcon}>🏮</Text>}
           {!hasHoliday && specialDay.isSpecial && (
@@ -119,14 +135,14 @@ const CalendarScreen: React.FC = () => {
     return days;
   };
 
-  const renderEventInfo = () => {
+  const renderEventInfoModal = () => {
     const lunarDate = solarToLunar(selectedDate);
     const holidayKey = `${lunarDate.month}/${lunarDate.day}`;
     const holiday = vietnameseHolidays[holidayKey];
 
     if (holiday) {
       return (
-        <View style={styles.eventCard}>
+        <ScrollView style={styles.modalContent}>
           <Text style={styles.eventTitleEn}>{holiday.nameEn}</Text>
           <Text style={styles.eventTitleVi}>{holiday.nameVi}</Text>
           <Text style={styles.eventDescription}>{holiday.descriptionEn}</Text>
@@ -135,7 +151,7 @@ const CalendarScreen: React.FC = () => {
           <Text style={styles.sectionContent}>{holiday.traditions}</Text>
           <Text style={styles.sectionTitle}>🙏 Altar Offerings</Text>
           <Text style={styles.sectionContent}>{holiday.offerings}</Text>
-        </View>
+        </ScrollView>
       );
     }
 
@@ -143,12 +159,12 @@ const CalendarScreen: React.FC = () => {
     if (specialDay.isSpecial && specialDay.type) {
       const offering = altarOfferings[specialDay.type];
       return (
-        <View style={styles.eventCard}>
+        <ScrollView style={styles.modalContent}>
           <Text style={styles.eventTitleEn}>{offering.nameEn}</Text>
           <Text style={styles.eventTitleVi}>{offering.nameVi}</Text>
           <Text style={styles.sectionTitle}>🙏 Recommended Offerings</Text>
           <Text style={styles.sectionContent}>{offering.offerings}</Text>
-        </View>
+        </ScrollView>
       );
     }
 
@@ -212,8 +228,6 @@ const CalendarScreen: React.FC = () => {
 
       <MoonPhaseView phase={phase} phaseInfo={phaseInfo} />
 
-      {renderEventInfo()}
-
       <View style={styles.navControls}>
         <TouchableOpacity
           style={styles.navButton}
@@ -233,6 +247,31 @@ const CalendarScreen: React.FC = () => {
           <Text style={styles.navButtonText}>Next →</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Info Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showInfoModal}
+        onRequestClose={() => setShowInfoModal(false)}>
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowInfoModal(false)}>
+          <Pressable style={styles.modalContainer} onPress={(e) => e.stopPropagation()}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowInfoModal(false)}>
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            {renderEventInfoModal()}
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <View style={{ height: 20 }} />
     </ScrollView>
@@ -384,14 +423,77 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     textAlign: 'center',
   },
-  eventCard: {
-    backgroundColor: 'rgba(255,100,100,0.2)',
+  navControls: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 15,
+    marginTop: 10,
+  },
+  navButton: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    padding: 12,
+    borderRadius: 25,
+  },
+  navButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  todayButton: {
+    backgroundColor: 'rgba(255,215,0,0.2)',
+    borderColor: 'rgba(255,215,0,0.5)',
+  },
+  todayButtonText: {
+    color: '#ffd700',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '85%',
+    maxHeight: '70%',
+    backgroundColor: '#1a1a3e',
+    borderRadius: 20,
     borderWidth: 2,
-    borderColor: 'rgba(255,100,100,0.5)',
-    borderRadius: 15,
+    borderColor: 'rgba(255,100,100,0.6)',
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 15,
-    marginHorizontal: 15,
-    marginBottom: 15,
+    backgroundColor: 'rgba(255,100,100,0.2)',
+    borderBottomWidth: 2,
+    borderBottomColor: 'rgba(255,100,100,0.4)',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffd700',
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalContent: {
+    padding: 20,
+    maxHeight: 400,
   },
   eventTitleEn: {
     fontSize: 18,
@@ -427,32 +529,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#ddd',
     lineHeight: 19,
-  },
-  navControls: {
-    flexDirection: 'row',
-    gap: 10,
-    paddingHorizontal: 15,
-    marginTop: 10,
-  },
-  navButton: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-    padding: 12,
-    borderRadius: 25,
-  },
-  navButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 14,
-  },
-  todayButton: {
-    backgroundColor: 'rgba(255,215,0,0.2)',
-    borderColor: 'rgba(255,215,0,0.5)',
-  },
-  todayButtonText: {
-    color: '#ffd700',
   },
 });
 

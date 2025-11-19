@@ -50,7 +50,11 @@ public class SmallWidgetProvider extends AppWidgetProvider {
         SimpleDateFormat solarFormat = new SimpleDateFormat("MMM d", Locale.ENGLISH);
         String solarDateStr = solarFormat.format(today);
 
+        // Determine background based on day type
+        int backgroundDrawable = getBackgroundForLunarDay(lunarDate);
+
         // Update widget views
+        views.setInt(R.id.widget_root, "setBackgroundResource", backgroundDrawable);
         views.setTextViewText(R.id.lunar_date_text, lunarDate.getFormattedDate());
         views.setTextViewText(R.id.moon_phase_emoji, moonEmoji);
         views.setTextViewText(R.id.solar_date_text, solarDateStr);
@@ -63,9 +67,29 @@ public class SmallWidgetProvider extends AppWidgetProvider {
             intent,
             android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE
         );
-        views.setOnClickPendingIntent(R.id.lunar_date_text, pendingIntent);
+        views.setOnClickPendingIntent(R.id.widget_root, pendingIntent);
 
         // Update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private static int getBackgroundForLunarDay(LunarCalendarUtils.LunarDate lunarDate) {
+        // Check if it's a holiday
+        String holidayName = LunarCalendarUtils.getHolidayName(lunarDate);
+        if (holidayName != null && !holidayName.equals("Mùng 1") && !holidayName.equals("Rằm") && !holidayName.equals("Cuối tháng")) {
+            return R.drawable.widget_background_holiday;
+        }
+
+        // Check special days
+        if (lunarDate.day == 1) {
+            return R.drawable.widget_background_first_day;
+        } else if (lunarDate.day == 15) {
+            return R.drawable.widget_background_full_moon;
+        } else if (lunarDate.day >= 29) {
+            return R.drawable.widget_background_month_end;
+        }
+
+        // Default background
+        return R.drawable.widget_background;
     }
 }
