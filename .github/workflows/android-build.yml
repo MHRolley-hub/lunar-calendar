@@ -24,6 +24,9 @@ on:
           - debug
           - release
 
+permissions:
+  contents: write
+
 jobs:
   build-android:
     name: Build Android APK
@@ -95,7 +98,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Decode release keystore (if available)
-        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main'
+        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
         env:
           RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
         run: |
@@ -108,12 +111,12 @@ jobs:
           fi
 
       - name: Build Debug APK
-        if: github.event.inputs.build_type != 'release' && github.ref != 'refs/heads/main'
+        if: github.event.inputs.build_type != 'release' && github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/claude/')
         working-directory: lunar-calendar-native/android
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Build Release APK
-        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main'
+        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
         working-directory: lunar-calendar-native/android
         env:
           RELEASE_KEYSTORE_FILE: ${{ env.KEYSTORE_FILE }}
@@ -123,7 +126,7 @@ jobs:
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload Debug APK
-        if: github.event.inputs.build_type != 'release' && github.ref != 'refs/heads/main'
+        if: github.event.inputs.build_type != 'release' && github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/claude/')
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
@@ -131,7 +134,7 @@ jobs:
           retention-days: 14
 
       - name: Upload Release APK
-        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main'
+        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
         uses: actions/upload-artifact@v4
         with:
           name: app-release
