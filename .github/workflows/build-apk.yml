@@ -49,6 +49,9 @@ jobs:
           # Install ImageMagick
           sudo apt-get update && sudo apt-get install -y imagemagick
 
+          # Create mipmap directories
+          mkdir -p mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi
+
           # Create a simple moon icon for each density
           # mdpi: 48x48
           convert -size 48x48 xc:'#1a1a3e' \
