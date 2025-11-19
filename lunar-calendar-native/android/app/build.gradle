@@ -17,12 +17,18 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.lunarcalendarapp"
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "com.lunarcalendarapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "false"
+        buildConfigField "boolean", "IS_HERMES_ENABLED", "true"
     }
 
     signingConfigs {
