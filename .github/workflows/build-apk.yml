@@ -43,13 +43,12 @@ jobs:
             --bundle-output android/app/src/main/assets/index.android.bundle \
             --assets-dest android/app/src/main/res/
 
-      - name: Make gradlew executable
-        working-directory: ./lunar-calendar-native/android
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Build APK
+      - name: Build APK with Gradle
         working-directory: ./lunar-calendar-native/android
-        run: ./gradlew assembleRelease --no-daemon
+        run: gradle assembleRelease --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
