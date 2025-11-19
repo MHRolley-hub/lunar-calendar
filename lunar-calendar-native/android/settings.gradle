@@ -2,7 +2,7 @@ rootProject.name = 'LunarCalendarApp'
 
 // Apply React Native native modules
 def nativeModulesGradleFile = new File(
-    projectDir,
+    settingsDir,
     "../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"
 )
 if (nativeModulesGradleFile.exists()) {
@@ -14,7 +14,7 @@ include ':app'
 
 // Include React Native Gradle plugin
 def rnGradlePluginDir = new File(
-    projectDir,
+    settingsDir,
     "../node_modules/@react-native/gradle-plugin"
 )
 if (rnGradlePluginDir.exists()) {
