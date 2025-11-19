@@ -1,0 +1,65 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ claude/fix-android-app-issues-01Enxyor5mNAUYwe9jMuw2vi, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: lunar-calendar-native/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./lunar-calendar-native
+        run: npm ci
+
+      - name: Bundle JavaScript
+        working-directory: ./lunar-calendar-native
+        run: |
+          mkdir -p android/app/src/main/assets
+          npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output android/app/src/main/assets/index.android.bundle \
+            --assets-dest android/app/src/main/res/
+
+      - name: Make gradlew executable
+        working-directory: ./lunar-calendar-native/android
+        run: chmod +x gradlew
+
+      - name: Build APK
+        working-directory: ./lunar-calendar-native/android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vietnamese-Lunar-Calendar-APK
+          path: lunar-calendar-native/android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+
+      - name: Get APK info
+        working-directory: ./lunar-calendar-native/android/app/build/outputs/apk/release
+        run: |
+          echo "APK Size: $(du -h app-release.apk | cut -f1)"
+          echo "APK Location: $(pwd)/app-release.apk"
