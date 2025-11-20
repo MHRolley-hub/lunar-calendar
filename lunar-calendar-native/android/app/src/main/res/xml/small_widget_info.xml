@@ -6,6 +6,7 @@
     android:targetCellHeight="1"
     android:updatePeriodMillis="3600000"
     android:initialLayout="@layout/widget_small"
+    android:configure="com.lunarcalendarapp.WidgetConfigActivity"
     android:description="@string/small_widget_description"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#1a1a3e">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Widget Text Size"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adjust the text size in your widget:"
+        android:textSize="14sp"
+        android:textColor="#CCCCCC"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Text Size Slider -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Text Size"
+        android:textSize="14sp"
+        android:textColor="#FFD700"
+        android:layout_marginBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/textSizeSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="50"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/textSizeValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Medium (11sp)"
+        android:textSize="12sp"
+        android:textColor="#CCCCCC"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Preview Section -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Preview"
+        android:textSize="14sp"
+        android:textColor="#FFD700"
+        android:layout_marginBottom="8dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/widget_background"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/previewLunarDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="11sp"
+            android:textColor="#FFD700"
+            android:textStyle="bold"
+            android:text="11/1" />
+
+        <TextView
+            android:id="@+id/previewMoonEmoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/previewLunarDate"
+            android:layout_centerHorizontal="true"
+            android:textSize="32sp"
+            android:text="🌙" />
+
+        <TextView
+            android:id="@+id/previewSolarDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/previewMoonEmoji"
+            android:layout_centerHorizontal="true"
+            android:textSize="9sp"
+            android:textColor="#CCCCCC"
+            android:text="Nov 20" />
+    </RelativeLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="auto">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#666666" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#4CAF50" />
+    </LinearLayout>
+
+</LinearLayout>

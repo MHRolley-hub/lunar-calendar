@@ -5,7 +5,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+import android.util.TypedValue;
 import com.lunarcalendarapp.R;
+import com.lunarcalendarapp.WidgetConfigActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -16,6 +18,14 @@ public class LargeWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
+    }
+
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        // Clean up preferences when widget is deleted
+        for (int appWidgetId : appWidgetIds) {
+            WidgetConfigActivity.deleteTextSizePref(context, appWidgetId);
         }
     }
 
@@ -32,7 +42,7 @@ public class LargeWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_large);
 
         // Get current date
@@ -58,12 +68,21 @@ public class LargeWidgetProvider extends AppWidgetProvider {
         // Determine background based on day type
         int backgroundDrawable = getBackgroundForLunarDay(lunarDate);
 
+        // Load saved text size preference
+        float baseTextSize = WidgetConfigActivity.loadTextSizePref(context, appWidgetId);
+
         // Update widget views
         views.setInt(R.id.widget_root, "setBackgroundResource", backgroundDrawable);
         views.setTextViewText(R.id.lunar_date_text, lunarDate.getFormattedDate());
         views.setTextViewText(R.id.moon_phase_emoji, moonEmoji);
         views.setTextViewText(R.id.event_title, holidayName);
         views.setTextViewText(R.id.solar_date_text, solarDateStr);
+
+        // Apply custom text sizes
+        views.setTextViewTextSize(R.id.lunar_date_text, TypedValue.COMPLEX_UNIT_SP, baseTextSize);
+        views.setTextViewTextSize(R.id.moon_phase_emoji, TypedValue.COMPLEX_UNIT_SP, baseTextSize * 2.9f);
+        views.setTextViewTextSize(R.id.event_title, TypedValue.COMPLEX_UNIT_SP, baseTextSize);
+        views.setTextViewTextSize(R.id.solar_date_text, TypedValue.COMPLEX_UNIT_SP, baseTextSize * 0.82f);
 
         // Create intent to open app when widget is clicked
         Intent intent = new Intent(context, com.lunarcalendarapp.MainActivity.class);
