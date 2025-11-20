@@ -133,12 +133,18 @@ jobs:
           path: lunar-calendar-native/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
 
+      - name: Rename Release APK
+        if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
+        run: |
+          cp lunar-calendar-native/android/app/build/outputs/apk/release/app-release.apk \
+             lunar-calendar-native/android/app/build/outputs/apk/release/vietnamese-lunar-calendar.apk
+
       - name: Upload Release APK
         if: github.event.inputs.build_type == 'release' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
-          path: lunar-calendar-native/android/app/build/outputs/apk/release/app-release.apk
+          name: vietnamese-lunar-calendar
+          path: lunar-calendar-native/android/app/build/outputs/apk/release/vietnamese-lunar-calendar.apk
           retention-days: 30
 
       - name: Get version info
@@ -156,9 +162,12 @@ jobs:
           body: |
             ## Vietnamese Lunar Calendar Android App
 
-            ### New Features
-            - 🎉 **Popup info modal** - Event details now appear in a beautiful centered popup
-            - 🎨 **Dynamic widget backgrounds** - Widget colors change based on lunar day type:
+            ### Latest Updates (v1.1)
+            - 🌕 **Full moon app icon** - Beautiful new icon with lunar craters
+            - 📐 **Centered widgets** - 2x1 widget content now properly centered
+            - 🔧 **Crash fixes** - Removed Firebase dependency, app runs stable
+            - 🎉 **Popup info modal** - Event details appear in centered popup
+            - 🎨 **Dynamic widget backgrounds** - Colors change by lunar day type:
               - 🏮 Red for holidays
               - 🌑 Gold for first days (Mùng 1)
               - 🌕 Blue for full moons (Rằm)
@@ -169,10 +178,11 @@ jobs:
             2. Enable "Install from Unknown Sources" in your Android settings
             3. Open the APK file to install
 
+            **Version:** 1.1
             **Build Date:** ${{ steps.version.outputs.date }}
             **Commit:** ${{ github.sha }}
           files: |
-            lunar-calendar-native/android/app/build/outputs/apk/release/app-release.apk
+            lunar-calendar-native/android/app/build/outputs/apk/release/vietnamese-lunar-calendar.apk
           draft: false
           prerelease: false
 
