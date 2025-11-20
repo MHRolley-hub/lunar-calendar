@@ -6,7 +6,8 @@ import {
   useColorScheme,
 } from 'react-native';
 import CalendarScreen from './src/screens/CalendarScreen';
-import { configureNotifications, scheduleDailyNotification } from './src/utils/notifications';
+// Temporarily disabled notifications to isolate crash
+// import { configureNotifications, scheduleDailyNotification } from './src/utils/notifications';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -16,15 +17,22 @@ function App(): React.JSX.Element {
     flex: 1,
   };
 
-  useEffect(() => {
-    // Initialize notifications on app start
-    try {
-      configureNotifications();
-      scheduleDailyNotification();
-    } catch (error) {
-      console.error('Failed to initialize notifications:', error);
-    }
-  }, []);
+  // Temporarily disabled notification initialization to isolate crash
+  // useEffect(() => {
+  //   // Delay notification initialization to prevent startup crashes
+  //   // Notifications will be set up after the app is fully loaded
+  //   const timer = setTimeout(() => {
+  //     try {
+  //       configureNotifications();
+  //       scheduleDailyNotification();
+  //     } catch (error) {
+  //       console.error('Failed to initialize notifications:', error);
+  //       // Continue running even if notifications fail
+  //     }
+  //   }, 2000); // Wait 2 seconds after app loads
+
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>

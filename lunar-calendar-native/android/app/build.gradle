@@ -85,8 +85,8 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
 
-    // For notifications
-    implementation 'com.google.firebase:firebase-messaging:23.4.0'
+    // For notifications (removed Firebase - not needed for local notifications)
+    // implementation 'com.google.firebase:firebase-messaging:23.4.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Kotlin
