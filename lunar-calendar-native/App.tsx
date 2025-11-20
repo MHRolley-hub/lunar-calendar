@@ -18,8 +18,12 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     // Initialize notifications on app start
-    configureNotifications();
-    scheduleDailyNotification();
+    try {
+      configureNotifications();
+      scheduleDailyNotification();
+    } catch (error) {
+      console.error('Failed to initialize notifications:', error);
+    }
   }, []);
 
   return (
