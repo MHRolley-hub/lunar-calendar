@@ -1,4 +1,4 @@
-import { lunarNewYearDates } from '../data/vietnameseHolidays';
+import { lunarNewYearDates, lunarMonthStarts2025 } from '../data/vietnameseHolidays';
 
 export interface LunarDate {
   year: number;
@@ -18,6 +18,35 @@ export interface MoonPhaseInfo {
  */
 export function solarToLunar(solarDate: Date): LunarDate {
   const year = solarDate.getFullYear();
+
+  // For 2025, use accurate astronomical data
+  if (year === 2025) {
+    const dateString = solarDate.toISOString().split('T')[0];
+    const solarTime = solarDate.getTime();
+
+    // Find which lunar month this date falls in
+    for (let i = 0; i < lunarMonthStarts2025.length; i++) {
+      const [month, startDateStr] = lunarMonthStarts2025[i];
+      const monthStart = new Date(startDateStr).getTime();
+
+      // Check if we're in this month or beyond
+      const nextMonth = i < lunarMonthStarts2025.length - 1
+        ? new Date(lunarMonthStarts2025[i + 1][1]).getTime()
+        : new Date('2026-01-17').getTime(); // Next year's Tết
+
+      if (solarTime >= monthStart && solarTime < nextMonth) {
+        // Calculate day within this month
+        const daysDiff = Math.floor((solarTime - monthStart) / (1000 * 60 * 60 * 24));
+        return {
+          year: 2025,
+          month: month,
+          day: daysDiff + 1,
+        };
+      }
+    }
+  }
+
+  // Fallback to approximation for other years
   let lunarNewYear = lunarNewYearDates[year];
   let lunarYear = year;
 

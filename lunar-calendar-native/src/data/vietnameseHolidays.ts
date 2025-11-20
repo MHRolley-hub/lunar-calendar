@@ -196,3 +196,21 @@ export const lunarNewYearDates: Record<number, Date> = {
   2034: new Date('2034-02-19'),
   2035: new Date('2035-02-08')
 };
+
+// Accurate Vietnamese lunar month start dates for 2025 (based on astronomical new moon data for Vietnam GMT+7)
+// Each entry is [month_number, start_date_string]
+export const lunarMonthStarts2025: [number, string][] = [
+  [1, '2025-01-29'],  // Month 1 (Tết Nguyên Đán)
+  [2, '2025-02-28'],  // Month 2
+  [3, '2025-03-29'],  // Month 3
+  [4, '2025-04-27'],  // Month 4
+  [5, '2025-05-27'],  // Month 5
+  [6, '2025-06-25'],  // Month 6
+  [7, '2025-07-24'],  // Month 7
+  [8, '2025-08-23'],  // Month 8
+  [9, '2025-09-21'],  // Month 9
+  [10, '2025-10-21'], // Month 10
+  [11, '2025-11-20'], // Month 11
+  [12, '2025-12-20'], // Month 12
+];
+
