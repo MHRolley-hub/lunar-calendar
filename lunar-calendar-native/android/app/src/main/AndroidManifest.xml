@@ -62,6 +62,16 @@
         </intent-filter>
       </receiver>
 
+      <!-- Widget Configuration Activity -->
+      <activity
+        android:name=".widgets.WidgetConfigActivity"
+        android:exported="false"
+        android:theme="@style/AppTheme">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+      </activity>
+
     </application>
 
 </manifest>

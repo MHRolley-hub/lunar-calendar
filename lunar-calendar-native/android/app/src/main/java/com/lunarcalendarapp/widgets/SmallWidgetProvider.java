@@ -20,6 +20,14 @@ public class SmallWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        // Clean up preferences when widgets are deleted
+        for (int appWidgetId : appWidgetIds) {
+            WidgetPreferences.deletePreferences(context, appWidgetId);
+        }
+    }
+
+    @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
@@ -53,11 +61,19 @@ public class SmallWidgetProvider extends AppWidgetProvider {
         // Determine background based on day type
         int backgroundDrawable = getBackgroundForLunarDay(lunarDate);
 
+        // Get text size preference for this widget
+        float baseTextSize = WidgetPreferences.getTextSize(context, appWidgetId);
+
         // Update widget views
         views.setInt(R.id.widget_root, "setBackgroundResource", backgroundDrawable);
         views.setTextViewText(R.id.lunar_date_text, lunarDate.getFormattedDate());
         views.setTextViewText(R.id.moon_phase_emoji, moonEmoji);
         views.setTextViewText(R.id.solar_date_text, solarDateStr);
+
+        // Apply text size with proportional scaling
+        views.setTextViewTextSize(R.id.lunar_date_text, android.util.TypedValue.COMPLEX_UNIT_SP, baseTextSize);
+        views.setTextViewTextSize(R.id.moon_phase_emoji, android.util.TypedValue.COMPLEX_UNIT_SP, baseTextSize * 2.5f);
+        views.setTextViewTextSize(R.id.solar_date_text, android.util.TypedValue.COMPLEX_UNIT_SP, baseTextSize * 0.75f);
 
         // Create intent to open app when widget is clicked
         Intent intent = new Intent(context, com.lunarcalendarapp.MainActivity.class);
